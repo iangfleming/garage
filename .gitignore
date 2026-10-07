@@ -1,0 +1,23 @@
+# dependencies
+node_modules/
+
+# build output
+.svelte-kit/
+build/
+dist/
+.netlify/
+
+# env
+.env
+.env.local
+.env.*.local
+
+# editor / os
+.DS_Store
+.idea/
+*.swp
+
+# supabase local dev
+supabase/.temp/
+supabase/.branches/
+supabase/snippets/

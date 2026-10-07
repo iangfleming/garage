@@ -1,0 +1,16 @@
+{
+	"name": "Garage",
+	"short_name": "Garage",
+	"description": "A gallery of personal bicycles.",
+	"start_url": "/",
+	"display": "standalone",
+	"background_color": "#0b0b0c",
+	"theme_color": "#0b0b0c",
+	"icons": [
+		{
+			"src": "/favicon.svg",
+			"sizes": "any",
+			"type": "image/svg+xml"
+		}
+	]
+}
