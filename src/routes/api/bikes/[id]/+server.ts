@@ -12,6 +12,13 @@ function text(value: unknown): string | null {
 	return value === '' ? null : value;
 }
 
+function focus(value: unknown): number {
+	if (typeof value !== 'number' || !Number.isInteger(value) || value < 0 || value > 100) {
+		throw error(400, 'Invalid focus value');
+	}
+	return value;
+}
+
 export const PATCH: RequestHandler = async ({ locals, params, request }) => {
 	await assertOwner(locals);
 
@@ -32,6 +39,9 @@ export const PATCH: RequestHandler = async ({ locals, params, request }) => {
 			patch.year = n;
 		}
 	}
+
+	if ('focus_x' in body) patch.focus_x = focus(body.focus_x);
+	if ('focus_y' in body) patch.focus_y = focus(body.focus_y);
 
 	if (Object.keys(patch).length === 0) throw error(400, 'No editable fields provided');
 

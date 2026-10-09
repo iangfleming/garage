@@ -3,6 +3,7 @@
 	import InlineText from '$lib/components/InlineText.svelte';
 	import AutosaveTextarea from '$lib/components/AutosaveTextarea.svelte';
 	import ImageUpload from '$lib/components/ImageUpload.svelte';
+	import CropControl from '$lib/components/CropControl.svelte';
 
 	let { data } = $props();
 
@@ -62,6 +63,10 @@
 		overrides = { ...overrides, image_path: result.image_path, image_url: result.url };
 	}
 
+	function onCropSaved(result: { focus_x: number; focus_y: number }) {
+		overrides = { ...overrides, focus_x: result.focus_x, focus_y: result.focus_y };
+	}
+
 	async function remove() {
 		if (!confirm('Delete this bike? This can’t be undone.')) return;
 		busy = true;
@@ -92,12 +97,26 @@
 
 	<div class="hero">
 		{#if bike.image_url}
-			<img class="hero-img" src={bike.image_url} alt={title} />
+			<img
+				class="hero-img"
+				src={bike.image_url}
+				alt={title}
+				style="object-position: {bike.focus_x ?? 50}% {bike.focus_y ?? 50}%"
+			/>
 		{:else}
 			<div class="hero-placeholder" aria-hidden="true"></div>
 		{/if}
 		{#if editable}
 			<ImageUpload bikeId={bike.id} onUploaded={onImageUploaded} />
+			{#if bike.image_url}
+				<CropControl
+					bikeId={bike.id}
+					imageUrl={bike.image_url}
+					focusX={bike.focus_x ?? 50}
+					focusY={bike.focus_y ?? 50}
+					onSaved={onCropSaved}
+				/>
+			{/if}
 		{/if}
 	</div>
 

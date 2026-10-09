@@ -13,6 +13,8 @@ export type Database = {
         Row: {
           created_at: string
           description: string | null
+          focus_x: number
+          focus_y: number
           id: string
           image_path: string | null
           maker: string | null
@@ -24,6 +26,8 @@ export type Database = {
         Insert: {
           created_at?: string
           description?: string | null
+          focus_x?: number
+          focus_y?: number
           id?: string
           image_path?: string | null
           maker?: string | null
@@ -35,6 +39,8 @@ export type Database = {
         Update: {
           created_at?: string
           description?: string | null
+          focus_x?: number
+          focus_y?: number
           id?: string
           image_path?: string | null
           maker?: string | null

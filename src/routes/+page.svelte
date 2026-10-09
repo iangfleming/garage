@@ -55,6 +55,7 @@
 						src={bike.image_url}
 						alt={[bike.maker, bike.model].filter(Boolean).join(' ') || 'Bike'}
 						loading="lazy"
+						style="object-position: {bike.focus_x ?? 50}% {bike.focus_y ?? 50}%"
 					/>
 				{:else}
 					<div class="placeholder" aria-hidden="true"></div>
