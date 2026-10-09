@@ -25,6 +25,7 @@
 
 html,
 body {
+	height: 100%;
 	margin: 0;
 	padding: 0;
 	background: var(--bg);
@@ -35,8 +36,15 @@ body {
 }
 
 body {
+	height: 100%;
 	padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom)
 		env(safe-area-inset-left);
+}
+
+.primary-grid {
+	height: 100%;
+	display: grid;
+	grid-template-rows: auto 1fr auto;
 }
 
 h1,
@@ -92,8 +100,10 @@ img {
 }
 
 .site-nav {
+	padding: 2rem;
 	display: flex;
 	align-items: center;
+	justify-content: end;
 	gap: 0.75rem;
 }
 
@@ -202,6 +212,7 @@ label {
 
 /* ---------- layout shell ---------- */
 .shell {
+	width: 100%;
 	max-width: var(--maxw);
 	margin: 0 auto;
 	padding: clamp(1.25rem, 4vw, 2.5rem) clamp(1rem, 4vw, 2rem) 4rem;

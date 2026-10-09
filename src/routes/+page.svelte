@@ -25,16 +25,6 @@
 	}
 </script>
 
-<svelte:head>
-	<title>Garage</title>
-	<meta name="description" content="A gallery of my bicycles." />
-</svelte:head>
-
-<div class="gallery-head">
-	<h1>The Garage</h1>
-	<p class="muted">A gallery of my bicycles.</p>
-</div>
-
 {#if addError}<div class="error-box">{addError}</div>{/if}
 
 <div class="grid">

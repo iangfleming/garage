@@ -9,7 +9,8 @@
 		"preview": "vite preview",
 		"prepare": "svelte-kit sync || echo ''",
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
-		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch"
+		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
+		"db:refresh-seed": "supabase db dump --linked --data-only -f supabase/seed.remote.sql && perl -0777 -pi -e 's/INSERT INTO \"storage\"\\.\"buckets\" .*?;\\n//s' supabase/seed.remote.sql && supabase db reset"
 	},
 	"dependencies": {
 		"@supabase/ssr": "^0.12.4",
