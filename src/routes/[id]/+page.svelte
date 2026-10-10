@@ -8,6 +8,7 @@
 	let { data } = $props();
 
 	type Bike = typeof data.bike;
+	type Todo = (typeof data.todos)[number];
 
 	// `bike` is the server row merged with any local edits made on this page. Keeping edits in a
 	// separate `overrides` object (rather than copying the row) keeps it reactive to `data`.
@@ -15,8 +16,17 @@
 	let busy = $state(false);
 	let errorText = $state<string | null>(null);
 
+	// Owner-only notes (bike_notes) and todos, kept as local state since only the owner
+	// ever sees or mutates them.
+	let notesOverride = $state<string | null | undefined>(undefined);
+	let todos = $state<Todo[]>([...data.todos]);
+	let newTodoBody = $state('');
+	let newTodoDue = $state('');
+	let addingTodo = $state(false);
+
 	const bike = $derived({ ...data.bike, ...overrides });
 	const editable = $derived(data.isOwner);
+	const notes = $derived(notesOverride !== undefined ? notesOverride : data.notes);
 
 	// Persist a single field server-side (RLS enforces owner-only). Returns true on success so the
 	// inline controls can exit edit mode; the returned row keeps local state in sync.
@@ -65,6 +75,91 @@
 
 	function onCropSaved(result: { focus_x: number; focus_y: number }) {
 		overrides = { ...overrides, focus_x: result.focus_x, focus_y: result.focus_y };
+	}
+
+	// Notes live in bike_notes (owner-only), so they save through their own endpoint.
+	async function commitNotes(raw: string): Promise<boolean> {
+		errorText = null;
+		try {
+			const res = await fetch(`/api/bikes/${bike.id}/notes`, {
+				method: 'PUT',
+				headers: { 'content-type': 'application/json' },
+				body: JSON.stringify({ notes: raw === '' ? null : raw })
+			});
+			if (!res.ok) {
+				errorText = 'Couldn’t save';
+				return false;
+			}
+			const { notes: saved } = (await res.json()) as { notes: string | null };
+			notesOverride = saved;
+			return true;
+		} catch {
+			errorText = 'Couldn’t save';
+			return false;
+		}
+	}
+
+	// Checking a todo off deletes its row.
+	async function checkOff(todo: Todo) {
+		errorText = null;
+		try {
+			const res = await fetch(`/api/todos/${todo.id}`, { method: 'DELETE' });
+			if (!res.ok) {
+				errorText = 'Couldn’t complete todo';
+				return;
+			}
+			todos = todos.filter((t) => t.id !== todo.id);
+		} catch {
+			errorText = 'Couldn’t complete todo';
+		}
+	}
+
+	async function editTodo(todo: Todo, patch: { body?: string; due_date?: string | null }) {
+		errorText = null;
+		try {
+			const res = await fetch(`/api/todos/${todo.id}`, {
+				method: 'PATCH',
+				headers: { 'content-type': 'application/json' },
+				body: JSON.stringify(patch)
+			});
+			if (!res.ok) {
+				errorText = 'Couldn’t save';
+				return false;
+			}
+			const updated = (await res.json()) as Todo;
+			todos = todos.map((t) => (t.id === todo.id ? updated : t));
+			return true;
+		} catch {
+			errorText = 'Couldn’t save';
+			return false;
+		}
+	}
+
+	async function addTodo(event: Event) {
+		event.preventDefault();
+		const body = newTodoBody.trim();
+		if (!body || addingTodo) return;
+		addingTodo = true;
+		errorText = null;
+		try {
+			const res = await fetch(`/api/bikes/${bike.id}/todos`, {
+				method: 'POST',
+				headers: { 'content-type': 'application/json' },
+				body: JSON.stringify({ body, due_date: newTodoDue || null })
+			});
+			if (!res.ok) {
+				errorText = 'Couldn’t add todo';
+				return;
+			}
+			const created = (await res.json()) as Todo;
+			todos = [created, ...todos];
+			newTodoBody = '';
+			newTodoDue = '';
+		} catch {
+			errorText = 'Couldn’t add todo';
+		} finally {
+			addingTodo = false;
+		}
 	}
 
 	async function remove() {
@@ -163,17 +258,67 @@
 		</div>
 	</div>
 
-	<section class="notes-section">
-		<h2>Notes</h2>
-		<AutosaveTextarea
-			value={bike.notes}
-			{editable}
-			placeholder="Add notes…"
-			commit={(v) => commit('notes', v)}
-		/>
-	</section>
-
 	{#if editable}
+		<section class="notes-section">
+			<h2>Notes</h2>
+			<AutosaveTextarea value={notes} {editable} placeholder="Add notes…" commit={commitNotes} />
+		</section>
+
+		<section class="todos-section">
+			<h2>Todos</h2>
+			{#if todos.length > 0}
+				<ul class="todo-list">
+					{#each todos as todo (todo.id)}
+						<li class="todo-item">
+							<input
+								type="checkbox"
+								class="todo-check"
+								title="Complete (removes the todo)"
+								aria-label="Complete todo"
+								onchange={() => checkOff(todo)}
+							/>
+							<span class="todo-body">
+								<InlineText
+									value={todo.body}
+									{editable}
+									placeholder="Todo"
+									commit={(v) => editTodo(todo, { body: v })}
+								/>
+							</span>
+							<input
+								type="date"
+								class="todo-due"
+								value={todo.due_date ?? ''}
+								title="Due date (optional)"
+								aria-label="Due date"
+								onchange={(e) => editTodo(todo, { due_date: e.currentTarget.value || null })}
+							/>
+						</li>
+					{/each}
+				</ul>
+			{:else}
+				<p class="muted todo-empty">No todos yet.</p>
+			{/if}
+			<form class="todo-add" onsubmit={addTodo}>
+				<input
+					class="todo-add-body"
+					bind:value={newTodoBody}
+					placeholder="Add a todo…"
+					maxlength="500"
+				/>
+				<input
+					type="date"
+					class="todo-add-due"
+					bind:value={newTodoDue}
+					title="Due date (optional)"
+					aria-label="Due date (optional)"
+				/>
+				<button type="submit" disabled={addingTodo || newTodoBody.trim() === ''}>
+					{addingTodo ? 'Adding…' : 'Add'}
+				</button>
+			</form>
+		</section>
+
 		<div class="danger-zone">
 			<button type="button" class="btn-danger" onclick={remove} disabled={busy}>
 				{busy ? 'Deleting…' : 'Delete bike'}

@@ -15,6 +15,9 @@
 
 	<footer>
 		<nav class="site-nav">
+			{#if data.isOwner}
+				<a class="btn-ghost" href="/todos">Todos</a>
+			{/if}
 			{#if data.user}
 				<span class="who muted">{data.user.email}</span>
 				<form method="post" action="/signout" class="inline-form">

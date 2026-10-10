@@ -28,7 +28,6 @@ export const PATCH: RequestHandler = async ({ locals, params, request }) => {
 	if ('maker' in body) patch.maker = text(body.maker);
 	if ('model' in body) patch.model = text(body.model);
 	if ('description' in body) patch.description = text(body.description);
-	if ('notes' in body) patch.notes = text(body.notes);
 	if ('year' in body) {
 		const raw = body.year;
 		if (raw === null || raw === undefined || raw === '') {

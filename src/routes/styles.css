@@ -549,6 +549,140 @@ label {
 	justify-content: flex-end;
 }
 
+/* todos (owner-only, bike page) */
+.todos-section {
+	border-top: 1px solid var(--border-soft);
+	padding-top: 1.5rem;
+	margin-bottom: 2.5rem;
+}
+
+.todo-list {
+	list-style: none;
+	margin: 0 0 1rem;
+	padding: 0;
+	display: flex;
+	flex-direction: column;
+	gap: 0.3rem;
+}
+
+.todo-item {
+	display: flex;
+	align-items: center;
+	gap: 0.6rem;
+}
+
+.todo-check {
+	width: auto;
+	flex: none;
+	accent-color: var(--accent);
+	cursor: pointer;
+}
+
+.todo-body {
+	flex: 1;
+	min-width: 0;
+}
+
+.todo-due,
+.todo-add-due {
+	width: auto;
+	flex: none;
+	color: var(--text-dim);
+	font-size: 0.85rem;
+	padding: 0.4rem 0.5rem;
+}
+
+.todo-empty {
+	margin: 0 0 1rem;
+}
+
+.todo-add {
+	display: flex;
+	gap: 0.5rem;
+	align-items: center;
+}
+
+.todo-add-body {
+	flex: 1;
+	min-width: 0;
+}
+
+.todo-add button {
+	flex: none;
+}
+
+/* todos admin table */
+.todo-table-wrap {
+	overflow-x: auto;
+	border: 1px solid var(--border-soft);
+	border-radius: var(--radius);
+	background: var(--surface);
+}
+
+.todo-table {
+	width: 100%;
+	border-collapse: collapse;
+	font-size: 0.92rem;
+}
+
+.todo-table th,
+.todo-table td {
+	text-align: left;
+	padding: 0.55rem 0.75rem;
+	border-bottom: 1px solid var(--border-soft);
+	vertical-align: middle;
+}
+
+.todo-table tbody tr:last-child td {
+	border-bottom: none;
+}
+
+.todo-table thead th {
+	border-bottom: 1px solid var(--border);
+	font-weight: 600;
+	white-space: nowrap;
+}
+
+.sort-btn {
+	background: transparent;
+	padding: 0;
+	border-radius: 0;
+	font: inherit;
+	font-weight: 600;
+	color: var(--text);
+}
+
+.sort-btn:hover:not(:disabled) {
+	filter: none;
+	color: var(--text-dim);
+}
+
+.col-check {
+	width: 2.4rem;
+}
+
+.todo-table .col-check input[type='checkbox'] {
+	width: auto;
+	accent-color: var(--accent);
+	cursor: pointer;
+}
+
+.col-body {
+	word-break: break-word;
+}
+
+.col-date {
+	white-space: nowrap;
+}
+
+.todo-table td a:hover {
+	color: var(--text-dim);
+}
+
+.overdue {
+	color: var(--danger);
+}
+
 /* ---------- shared bits ---------- */
 .error-box {
 	background: color-mix(in srgb, var(--danger) 14%, transparent);

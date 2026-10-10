@@ -9,6 +9,35 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      bike_notes: {
+        Row: {
+          bike_id: string
+          created_at: string
+          notes: string | null
+          updated_at: string
+        }
+        Insert: {
+          bike_id: string
+          created_at?: string
+          notes?: string | null
+          updated_at?: string
+        }
+        Update: {
+          bike_id?: string
+          created_at?: string
+          notes?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "bike_notes_bike_id_fkey"
+            columns: ["bike_id"]
+            isOneToOne: true
+            referencedRelation: "bikes"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
       bikes: {
         Row: {
           created_at: string
@@ -19,7 +48,6 @@ export type Database = {
           image_path: string | null
           maker: string | null
           model: string | null
-          notes: string | null
           updated_at: string
           year: number | null
         }
@@ -32,7 +60,6 @@ export type Database = {
           image_path?: string | null
           maker?: string | null
           model?: string | null
-          notes?: string | null
           updated_at?: string
           year?: number | null
         }
@@ -45,7 +72,6 @@ export type Database = {
           image_path?: string | null
           maker?: string | null
           model?: string | null
-          notes?: string | null
           updated_at?: string
           year?: number | null
         }
@@ -65,6 +91,38 @@ export type Database = {
           email?: string
         }
         Relationships: []
+      }
+      todos: {
+        Row: {
+          bike_id: string
+          body: string
+          created_at: string
+          due_date: string | null
+          id: string
+        }
+        Insert: {
+          bike_id: string
+          body: string
+          created_at?: string
+          due_date?: string | null
+          id?: string
+        }
+        Update: {
+          bike_id?: string
+          body?: string
+          created_at?: string
+          due_date?: string | null
+          id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "todos_bike_id_fkey"
+            columns: ["bike_id"]
+            isOneToOne: false
+            referencedRelation: "bikes"
+            referencedColumns: ["id"]
+          }
+        ]
       }
     }
     Views: {
